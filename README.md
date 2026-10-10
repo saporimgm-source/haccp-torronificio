@@ -1,4 +1,4 @@
-# HACCP Torronificio
+# Gestionale Torronificio
 
 App del Torronificio delle Madonie (Blufi).
 

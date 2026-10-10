@@ -1,7 +1,7 @@
 {
-  "name": "HACCP Torronificio",
-  "short_name": "HACCP",
-  "description": "Gestionale HACCP del Torronificio delle Madonie",
+  "name": "Gestionale Torronificio",
+  "short_name": "Gestionale",
+  "description": "Gestionale del Torronificio delle Madonie: HACCP, magazzino, produzione, DDT e fatture",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -9,7 +9,17 @@
   "theme_color": "#2B2013",
   "lang": "it",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }
