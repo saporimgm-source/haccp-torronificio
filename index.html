@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HACCP Torronificio</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#2B2013">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="HACCP">
+<style>
+body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#FBF7F0;color:#2B2013}
+.box{max-width:440px;margin:70px auto;padding:24px;text-align:center;background:#fff;border:1px solid #e3d6c2;border-radius:14px}
+.box img{width:96px;height:96px;border-radius:18px}
+.box p{color:#7a6a55;line-height:1.45}
+input{width:100%;box-sizing:border-box;border:1px solid #e3d6c2;border-radius:8px;padding:10px;font-size:16px;margin:8px 0}
+button{background:#C2560A;color:#fff;border:0;border-radius:10px;padding:11px 18px;font-weight:600;font-size:16px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="box" id="msg"><img src="icon-192.png" alt=""><h2>HACCP Torronificio</h2><p>Avvio in corso…</p></div>
+<script>
+(function () {
+  var EXEC = 'https://script.google.com/macros/s/AKfycbzvXKcWXwXYdef6Bb5qjWuZ2lskjA6jC_FVMjQMu9Gt_gYqeAwCFrYEPCPDcTJRtcUE6Q/exec';
+  var CACHE = 'haccp-app', KEY = 'app.html';
+  function msg(h) { document.getElementById('msg').innerHTML = '<img src="icon-192.png" alt=""><h2>HACCP Torronificio</h2>' + h; }
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+  var m = location.hash.match(/k=([^&]+)/);
+  if (m) { try { localStorage.setItem('haccp_dk', decodeURIComponent(m[1])); } catch (e) {} try { history.replaceState(null, '', location.pathname); } catch (e) {} }
+  var dk = ''; try { dk = localStorage.getItem('haccp_dk') || ''; } catch (e) {}
+  if (!dk) {
+    msg('<p>Questo computer o telefono non è ancora abilitato.<br>Apri il link di installazione che trovi nell\'app, sezione <b>Operatori</b> (solo la titolare), oppure incollalo qui:</p><input id="lk" placeholder="Incolla qui il link"><button id="ok">Abilita</button>');
+    document.getElementById('ok').onclick = function () { var v = document.getElementById('lk').value, k = (v.match(/k=([^&\s]+)/) || [])[1]; if (!k) return alert('Link non valido'); localStorage.setItem('haccp_dk', decodeURIComponent(k)); location.reload(); };
+    return;
+  }
+  function leggi() {
+    if (window.caches) return caches.open(CACHE).then(function (c) { return c.match(KEY); }).then(function (r) { return r ? r.text() : null; }).catch(function () { return null; });
+    try { return Promise.resolve(localStorage.getItem('haccp_app_html')); } catch (e) { return Promise.resolve(null); }
+  }
+  function salva(h) {
+    if (window.caches) return caches.open(CACHE).then(function (c) { return c.put(KEY, new Response(h, { headers: { 'Content-Type': 'text/html; charset=utf-8' } })); }).catch(function () {});
+    try { localStorage.setItem('haccp_app_html', h); } catch (e) {}
+    return Promise.resolve();
+  }
+  function scarica() {
+    var c = window.AbortController ? new AbortController() : null, t = setTimeout(function () { if (c) c.abort(); }, 25000);
+    return fetch(EXEC + '?f=app&dk=' + encodeURIComponent(dk), { cache: 'no-store', signal: c ? c.signal : undefined })
+      .then(function (r) { return r.text(); })
+      .then(function (h) {
+        clearTimeout(t);
+        if (h.indexOf('DISPOSITIVO_NON_ABILITATO') === 0) { try { localStorage.removeItem('haccp_dk'); } catch (e) {} throw new Error('NONABIL'); }
+        if (h.indexOf('<html') < 0) throw new Error('Risposta non valida');
+        return salva(h).then(function () { return h; });
+      });
+  }
+  function avvia(h) { document.open(); document.write(h); document.close(); }
+  leggi().then(function (cached) {
+    if (cached) { avvia(cached); if (navigator.onLine !== false) scarica().catch(function () {}); return; }
+    scarica().then(avvia, function (e) {
+      if (String(e && e.message) === 'NONABIL') return msg('<p>Il link di installazione non è più valido. Chiedi un nuovo link alla titolare.</p>');
+      msg('<p>Per il <b>primo avvio</b> su questo dispositivo serve la connessione a internet.<br>Dopo, l\'app si apre anche senza segnale.</p><button onclick="location.reload()">Riprova</button>');
+    });
+  });
+})();
+</script>
+</body>
+</html>
