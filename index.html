@@ -46,7 +46,7 @@ button{background:#C2560A;color:#fff;border:0;border-radius:10px;padding:11px 18
     return Promise.resolve();
   }
   function scarica() {
-    var c = window.AbortController ? new AbortController() : null, t = setTimeout(function () { if (c) c.abort(); }, 25000);
+    var c = window.AbortController ? new AbortController() : null, t = setTimeout(function () { if (c) c.abort(); }, 120000);
     return fetch(EXEC + '?f=app&dk=' + encodeURIComponent(dk), { cache: 'no-store', signal: c ? c.signal : undefined })
       .then(function (r) { return r.text(); })
       .then(function (h) {
